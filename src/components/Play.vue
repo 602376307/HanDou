@@ -33,6 +33,11 @@ function reset() {
   input.value = ''
   inputValue.value = ''
 }
+function nextPuzzle() {
+  dayNo.value++
+  reset()
+  focus()
+}
 function handleInput(e: Event) {
   const el = (e.target! as HTMLInputElement)
   input.value = filterNonChineseChars(el.value).slice(0, 4)
@@ -145,7 +150,13 @@ watchEffect(() => {
       <Transition name="fade-in">
         <div v-if="isFinishedDelay && isFinished">
           <ResultFooter />
-          <Countdown />
+          <div flex="~ col" items-center pt12 pb16>
+            <button btn p="x6 y2" text-lg @click="nextPuzzle">
+              下一题
+            </button>
+            <ShareButton m4 />
+            <ToggleMask :hint="true" />
+          </div>
         </div>
       </Transition>
 

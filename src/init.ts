@@ -15,12 +15,6 @@ watchEffect(() => {
     meta.value.passed = true
 })
 
-watch(daySince, (n, o) => {
-  // on day changed
-  if (o === dayNo.value && isFinished.value)
-    dayNo.value = n
-})
-
 watch([isFinished, meta], () => {
   if (isFinished.value)
     markEnd()
