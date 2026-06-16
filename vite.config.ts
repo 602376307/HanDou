@@ -8,7 +8,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Unocss from 'unocss/vite'
 
 export default defineConfig({
-  base: process.env.GITHUB_ACTIONS === 'true' ? '/Handle-main/' : '/',
+  base: process.env.GITHUB_ACTIONS === 'true' ? '/HanDou/' : '/',
   resolve: {
     alias: {
       '~/': `${path.resolve(__dirname, 'src')}/`,
