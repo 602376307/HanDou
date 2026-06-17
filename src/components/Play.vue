@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { filterNonChineseChars } from '@hankit/tools'
-import { answer, dayNo, isDev, isFailed, isFinished, showCheatSheet, showFailed, showHelp, showHint } from '~/state'
+import { answer, dayNo, isDev, isFailed, isFinished, randomDayNo, showCheatSheet, showFailed, showHelp, showHint } from '~/state'
 import { markStart, meta, tries, useNoHint, useStrictMode } from '~/storage'
 import { t } from '~/i18n'
 import { TRIES_LIMIT, WORD_LENGTH, checkValidIdiom } from '~/logic'
@@ -34,7 +34,7 @@ function reset() {
   inputValue.value = ''
 }
 function nextPuzzle() {
-  dayNo.value++
+  dayNo.value = randomDayNo()
   reset()
   focus()
 }

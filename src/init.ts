@@ -1,5 +1,5 @@
 import { initialized, markEnd, markStart, meta, pauseTimer } from './storage'
-import { answer, dayNo, daySince, isDev, isFinished, isPassed, showCheatSheet, showHelp } from './state'
+import { answer, dayNo, isDev, isFinished, isPassed, showCheatSheet, showHelp } from './state'
 import { t } from './i18n'
 import { answers } from './answers/list'
 import { START_DATE } from './logic/constants'
@@ -64,7 +64,7 @@ if (import.meta.hot) {
   console.log(`${answers.length} days prepared`)
   // eslint-disable-next-line no-console
   console.log(`${answers.length - dayNo.value} days left`)
-  if ((answers.length - daySince.value) < 10)
+  if ((answers.length - dayNo.value) < 10)
     // eslint-disable-next-line no-console
-    console.warn('Not enough days left!')
+    console.warn('剩余题目不足！')
 }

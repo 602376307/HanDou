@@ -28,6 +28,8 @@
   "hint": "提示",
   "hint-level-1": "字音提示",
   "hint-level-2": "汉字提示",
+  "hint-level-3": "二次字音提示",
+  "hint-level-4": "二次汉字提示",
   "hint-level-none": "无提示",
   "hint-note": "答案包含以下",
   "initials": "声母",
