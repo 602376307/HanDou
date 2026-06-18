@@ -40,9 +40,10 @@ function congrats() {
   }, 400)
 }
 
+/* 延迟触发，等待方块翻转动画完成后再播放彩纸效果 */
 watch(isPassed, (v) => {
   if (v)
-    setTimeout(congrats, 300)
+    setTimeout(congrats, 2000)
 }, { flush: 'post' })
 </script>
 
