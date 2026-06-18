@@ -30,7 +30,7 @@ watchEffect(() => {
   if (props.revealed) {
     setTimeout(() => {
       flip.value = true
-    }, Math.random() * 100) /* 减少随机延迟，避免 GPU 长时间处于半翻转状态 */
+    }, Math.random() * 300)
   }
 })
 </script>
@@ -47,15 +47,15 @@ watchEffect(() => {
           class="front"
           :char="c"
           :active="active"
-          :style="{ transitionDelay: `${i * 200}ms` }"
+          :style="{ transitionDelay: `${i * (300 + Math.random() * 50)}ms` }"
         />
         <CharBlock
           class="back"
           :char="c"
           :answer="result[i]"
           :style="{
-            transitionDelay: `${i * 200}ms`,
-            animationDelay: `${i * 100}ms`,
+            transitionDelay: `${i * (300 + Math.random() * 50)}ms`,
+            animationDelay: `${i * (100 + Math.random() * 50)}ms`,
           }"
         />
       </template>
@@ -74,7 +74,6 @@ watchEffect(() => {
 .tile {
   user-select: none;
   position: relative;
-  contain: paint layout style; /* 限制重绘范围，减少 GPU 合成层冲突 */
 }
 .tile .front,
 .tile .back {

@@ -1,49 +1,54 @@
 <script setup lang="ts">
-import confetti from 'canvas-confetti'
 import { isPassed } from '~/state'
 
-function congrats() {
-  const defaults = {
-    colors: [
-      '#5D8C7B',
-      '#F2D091',
-      '#F2A679',
-      '#D9695F',
-      '#8C4646',
-    ],
-    shapes: ['square'],
-    ticks: 500,
-  } as confetti.Options
-  confetti({
-    ...defaults,
-    particleCount: 80,
-    spread: 100,
-    origin: { y: 0 },
-  })
-  setTimeout(() => {
+/* 动态导入 canvas-confetti，避免库初始化异常导致整页白屏 */
+async function congrats() {
+  try {
+    const confetti = (await import('canvas-confetti')).default
+    const defaults = {
+      colors: [
+        '#5D8C7B',
+        '#F2D091',
+        '#F2A679',
+        '#D9695F',
+        '#8C4646',
+      ],
+      shapes: ['square'],
+      ticks: 500,
+    } as Parameters<typeof confetti>[0]
     confetti({
       ...defaults,
-      particleCount: 50,
-      angle: 60,
-      spread: 80,
-      origin: { x: 0 },
+      particleCount: 80,
+      spread: 100,
+      origin: { y: 0 },
     })
-  }, 250)
-  setTimeout(() => {
-    confetti({
-      ...defaults,
-      particleCount: 50,
-      angle: 120,
-      spread: 80,
-      origin: { x: 1 },
-    })
-  }, 400)
+    setTimeout(() => {
+      confetti({
+        ...defaults,
+        particleCount: 50,
+        angle: 60,
+        spread: 80,
+        origin: { x: 0 },
+      })
+    }, 250)
+    setTimeout(() => {
+      confetti({
+        ...defaults,
+        particleCount: 50,
+        angle: 120,
+        spread: 80,
+        origin: { x: 1 },
+      })
+    }, 400)
+  }
+  catch (e) {
+    console.warn('彩纸动画加载失败，不影响游戏进行', e)
+  }
 }
 
-/* 延迟触发，等待方块翻转动画完成后再播放彩纸效果 */
 watch(isPassed, (v) => {
   if (v)
-    setTimeout(congrats, 2000)
+    setTimeout(congrats, 300)
 }, { flush: 'post' })
 </script>
 
