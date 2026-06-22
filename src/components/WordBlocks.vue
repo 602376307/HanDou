@@ -81,14 +81,16 @@ watchEffect(() => {
   top: 0;
   left: 0;
   transition: transform 0.6s;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 .tile .back {
-  transform: scaleX(0);
+  transform: rotateY(180deg);
 }
 .tile.revealed .front {
-  transform: scaleX(0);
+  transform: rotateY(180deg);
 }
 .tile.revealed .back {
-  transform: scaleX(1);
+  transform: rotateY(0deg);
 }
 </style>
