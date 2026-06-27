@@ -1,4 +1,4 @@
-import { initialized, markEnd, markStart, meta, pauseTimer } from './storage'
+import { initialized, markEnd, markStart, meta, pauseTimer, getActiveGame, clearActiveGame, history } from './storage'
 import { answer, dayNo, isDev, isFinished, isPassed, showCheatSheet, showHelp } from './state'
 import { t } from './i18n'
 import { answers } from './answers/list'
@@ -10,15 +10,33 @@ useTitle(computed(() => `${t('name')} - ${t('description')}`))
 if (!initialized.value)
   showHelp.value = true
 
+/* 恢复上次未完成的游戏状态 */
+const savedGame = getActiveGame()
+if (savedGame && savedGame.dayNo === dayNo.value) {
+  const h = history.value[dayNo.value] || {}
+  h.tries = savedGame.tries
+  /* 恢复尝试次数，确保 isFailed 正确判断 */
+  if (savedGame.tries.length > 0) {
+    h.start = savedGame.meta.start
+    h.duration = savedGame.meta.duration
+    h.hint = savedGame.meta.hint
+    h.hintLevel = savedGame.meta.hintLevel
+    h.strict = savedGame.meta.strict
+  }
+  history.value[dayNo.value] = h
+}
+
 watchEffect(() => {
   if (isPassed.value)
     meta.value.passed = true
 })
 
 watch([isFinished, meta], () => {
-  if (isFinished.value)
+  if (isFinished.value) {
     markEnd()
-    // sendAnalytics()
+    clearActiveGame() /* 游戏完成时清除记忆 */
+  }
+  // sendAnalytics()
 }, { flush: 'post' })
 
 watch(isFinished, (v) => {

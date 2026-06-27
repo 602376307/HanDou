@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { filterNonChineseChars } from '@hankit/tools'
 import { answer, dayNo, isDev, isFailed, isFinished, randomDayNo, showCheatSheet, showFailed, showHelp, showHint } from '~/state'
-import { markStart, meta, tries, useNoHint, useStrictMode } from '~/storage'
+import { markStart, meta, tries, useNoHint, useStrictMode, saveActiveGame, clearActiveGame } from '~/storage'
 import { t } from '~/i18n'
 import { TRIES_LIMIT, WORD_LENGTH, checkValidIdiom } from '~/logic'
 
@@ -24,6 +24,7 @@ function enter() {
   if (meta.value.strict == null)
     meta.value.strict = useStrictMode.value
   tries.value.push(input.value)
+  saveActiveGame() /* 每次猜词后记忆当前进度 */
   input.value = ''
   inputValue.value = ''
 }
@@ -32,6 +33,7 @@ function reset() {
   meta.value = {}
   input.value = ''
   inputValue.value = ''
+  clearActiveGame() /* 重置时清除记忆 */
 }
 function nextPuzzle() {
   dayNo.value = randomDayNo()
@@ -50,6 +52,7 @@ function hint() {
   meta.value.hint = true
   if (!meta.value.hintLevel)
     meta.value.hintLevel = 1
+  saveActiveGame() /* 提示后保存状态 */
   showHint.value = true
 }
 function sheet() {

@@ -1,7 +1,7 @@
 import { breakpointsTailwind } from '@vueuse/core'
 import type { MatchType, ParsedChar } from './logic'
 import { TRIES_LIMIT, WORD_LENGTH, parseWord as _parseWord, testAnswer as _testAnswer, checkPass, getHint, numberToHanzi } from './logic'
-import { useNumberTone as _useNumberTone, inputMode, meta, spMode, tries } from './storage'
+import { useNumberTone as _useNumberTone, inputMode, meta, spMode, tries, getActiveGame } from './storage'
 import { getAnswerOfDay } from './answers'
 import { answers } from './answers/list'
 
@@ -36,7 +36,8 @@ export function randomDayNo() {
 
 const params = new URLSearchParams(window.location.search)
 export const isDev = import.meta.hot || params.get('dev') === 'hey'
-export const dayNo = ref(+(params.get('d') || randomDayNo()))
+/* 优先恢复未完成的游戏，否则使用 URL 参数或随机题目 */
+export const dayNo = ref(getActiveGame()?.dayNo ?? +(params.get('d') || randomDayNo()))
 export const dayNoHanzi = computed(() => `${numberToHanzi(dayNo.value)}日`)
 export const answer = computed(() =>
   params.get('word')

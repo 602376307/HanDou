@@ -39,6 +39,58 @@ export const tries = computed<string[]>({
   },
 })
 
+// 本轮游戏状态记忆（退出恢复用），使用原生 localStorage 避免 useStorage 序列化 Bug
+const ACTIVE_GAME_KEY = 'handle-active-game'
+
+interface ActiveGameData {
+  dayNo: number
+  tries: string[]
+  meta: {
+    start?: number
+    duration?: number
+    hint?: boolean
+    hintLevel?: number
+    strict?: boolean
+  }
+}
+
+export function getActiveGame(): ActiveGameData | null {
+  try {
+    const raw = localStorage.getItem(ACTIVE_GAME_KEY)
+    return raw ? JSON.parse(raw) : null
+  }
+  catch {
+    return null
+  }
+}
+
+export function setActiveGame(data: ActiveGameData | null) {
+  if (data)
+    localStorage.setItem(ACTIVE_GAME_KEY, JSON.stringify(data))
+  else
+    localStorage.removeItem(ACTIVE_GAME_KEY)
+}
+
+export function saveActiveGame() {
+  if (tries.value.length > 0) {
+    setActiveGame({
+      dayNo: dayNo.value,
+      tries: [...tries.value],
+      meta: {
+        start: meta.value.start,
+        duration: meta.value.duration,
+        hint: meta.value.hint,
+        hintLevel: meta.value.hintLevel,
+        strict: meta.value.strict,
+      },
+    })
+  }
+}
+
+export function clearActiveGame() {
+  setActiveGame(null)
+}
+
 export function markStart() {
   if (meta.value.end)
     return
