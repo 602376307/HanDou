@@ -24,7 +24,10 @@ export const meta = computed<TriesMeta>({
     return history.value[dayNo.value]
   },
   set(v) {
-    history.value[dayNo.value] = v
+    if (v && Object.keys(v).length)
+      history.value[dayNo.value] = v
+    else
+      delete history.value[dayNo.value]
   },
 })
 
@@ -35,7 +38,9 @@ export const tries = computed<string[]>({
     return legacyTries.value[dayNo.value] || meta.value.tries
   },
   set(v) {
-    meta.value.tries = v
+    if (!history.value[dayNo.value])
+      history.value[dayNo.value] = {}
+    history.value[dayNo.value].tries = v
   },
 })
 
@@ -46,7 +51,6 @@ interface ActiveGameData {
   dayNo: number
   tries: string[]
   meta: {
-    start?: number
     duration?: number
     hint?: boolean
     hintLevel?: number
@@ -73,12 +77,15 @@ export function setActiveGame(data: ActiveGameData | null) {
 
 export function saveActiveGame() {
   if (tries.value.length > 0) {
+    /* 保存前把当前未结算的时段（上次猜词到此刻）也累计进 duration */
+    let dur = meta.value.duration || 0
+    if (meta.value.start && !meta.value.end)
+      dur += Date.now() - meta.value.start
     setActiveGame({
       dayNo: dayNo.value,
       tries: [...tries.value],
       meta: {
-        start: meta.value.start,
-        duration: meta.value.duration,
+        duration: dur,
         hint: meta.value.hint,
         hintLevel: meta.value.hintLevel,
         strict: meta.value.strict,
@@ -89,6 +96,19 @@ export function saveActiveGame() {
 
 export function clearActiveGame() {
   setActiveGame(null)
+}
+
+/* 清理 history 中无有效数据的空记录 */
+export function cleanEmptyHistoryRecords() {
+  Object.keys(history.value).forEach((k) => {
+    const key = Number(k)
+    const h = history.value[key]
+    if (!h)
+      return
+    const hasData = h.tries?.length || h.start || h.duration || h.passed || h.failed || h.answer
+    if (!hasData)
+      delete history.value[key]
+  })
 }
 
 export function markStart() {

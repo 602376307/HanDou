@@ -1,4 +1,4 @@
-import { initialized, markEnd, markStart, meta, pauseTimer, getActiveGame, clearActiveGame, history } from './storage'
+import { initialized, markEnd, markStart, meta, pauseTimer, getActiveGame, clearActiveGame, history, cleanEmptyHistoryRecords } from './storage'
 import { answer, dayNo, isDev, isFinished, isPassed, showCheatSheet, showHelp } from './state'
 import { t } from './i18n'
 import { answers } from './answers/list'
@@ -10,6 +10,9 @@ useTitle(computed(() => `${t('name')} - ${t('description')}`))
 if (!initialized.value)
   showHelp.value = true
 
+/* 清理历史中已有的空记录 */
+cleanEmptyHistoryRecords()
+
 /* 恢复上次未完成的游戏状态 */
 const savedGame = getActiveGame()
 if (savedGame && savedGame.dayNo === dayNo.value) {
@@ -17,8 +20,9 @@ if (savedGame && savedGame.dayNo === dayNo.value) {
   h.tries = savedGame.tries
   /* 恢复尝试次数，确保 isFailed 正确判断 */
   if (savedGame.tries.length > 0) {
-    h.start = savedGame.meta.start
-    h.duration = savedGame.meta.duration
+    /* 只恢复已积累的时长，并把 start 设为当前时间，后续从此刻重新开始计时 */
+    h.duration = savedGame.meta.duration || 0
+    h.start = Date.now()
     h.hint = savedGame.meta.hint
     h.hintLevel = savedGame.meta.hintLevel
     h.strict = savedGame.meta.strict
